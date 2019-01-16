@@ -6,26 +6,107 @@
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-	
+	<style type="text/css">
+	</style>
 </head>
 <body>
 <center>
 <h1 style="color: red;">SlouLab StopWatch</h1>
 <hr><hr><hr>
 </center>
-<table align="center" style="font-size: 200%;">
+<table align="center">
 	<tr>
-		<td><span id="hour">00</span>:</td>
-		<td><span id="minute">00</span>:</td>
-		<td><span id="second">00</span>:</td>
-		<td><span id="msecond">00</span></td>
+		<td><span id="hour">00</span></td>
+		<td>:</td>
+		<td><span id="minute">00</span></td>
+		<td>:</td>
+		<td><span id="second">00</span></td>
 	</tr>
-</table>
+</table>	
+<center>	
+	<input type="submit" value="Start" id="but1" onclick="calling()">
+	<input type="submit" value="Stop" onclick="stop()">
+	<input type="submit" value="Reset">
+	<input type="submit" value="Lap">
+	<input type="submit" value="History">
+</center>
+	
+
+
 
 <!--Logic For Start Button Start -->
 <script type="text/javascript">
-	fuc
+var hour=parseInt(document.getElementById("hour").innerHTML);
+var minute=parseInt(document.getElementById("minute").innerHTML);
+var second=parseInt(document.getElementById("second").innerHTML);
+var startinterval;	
+function start()
+{	
+	
+		if(second==59)
+		{
+			second=0;
+			document.getElementById("second").innerHTML=twodigitmagic(second);	
+			if(minute==59)
+			{
+				minute=0;
+				document.getElementById("minute").innerHTML=twodigitmagic(minute);
+				if(hour==59) 
+				{
+					hour=0;
+					document.getElementById("hour").innerHTML=twodigitmagic(hour);
+				}
+				else
+				{
+					hour=hour+1;
+					document.getElementById("hour").innerHTML=twodigitmagic(hour);
+				}
+			}
+			else
+			{
+				minute=minute+1;
+				document.getElementById("minute").innerHTML=twodigitmagic(minute);
+			}
+		}
+		else
+		{
+			second=second+1;
+			document.getElementById("second").innerHTML=twodigitmagic(second);	
+		}
+			
+}
+
+	function calling()
+	{
+		
+		startinterval=setInterval(start,1000);
+		document.getElementById("but1").value = "Pause";
+		document.getElementById('but1').setAttribute( "onClick", "pause()" );
+	}
+
+	function pause()
+	{
+		clearInterval(startinterval);
+		document.getElementById("but1").value = "Resume";
+		document.getElementById('but1').setAttribute( "onClick", "calling()" );
+	}
+
+	function twodigitmagic(val) {
+   		return (val < 10) ? '0' + val.toString() : val.toString();
+	}
+
+	function stop()
+	{
+		clearInterval(startinterval);
+		hour=parseInt("00");
+		minute=parseInt("00");
+		second=parseInt("00");
+		document.getElementById("but1").value = "Start";
+		document.getElementById('but1').setAttribute( "onClick", "calling()" );
+	}
 </script>
 <!--Logic For Start Button End -->
+
+
 </body>
 </html>
