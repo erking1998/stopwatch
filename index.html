@@ -27,11 +27,13 @@
 	<input type="submit" value="Start" id="but1" onclick="calling()">
 	<input type="submit" value="Stop" onclick="stop()">
 	<input type="submit" value="Reset" onclick="reset()">
-	<input type="submit" value="Lap">
+	<input type="submit" value="Lap" onclick="lap()">
 	<input type="submit" value="History">
 </center>
 	
-
+<center>
+<div id="laplog"></div>
+</center>
 
 
 <!--Logic For Start Button Start -->
@@ -39,6 +41,12 @@
 var hour=parseInt(document.getElementById("hour").innerHTML);
 var minute=parseInt(document.getElementById("minute").innerHTML);
 var second=parseInt(document.getElementById("second").innerHTML);
+var lasttime=new Date("0001-01-01T00:00:00");;
+// alert(lasttime);
+var currenttime;
+var laplogs=[];
+laplogs[0]={logtime:"00",totaltime:"00"};
+// console.log(laplogs[0].totaltime);
 var startinterval;	
 
 function start()
@@ -118,6 +126,25 @@ function start()
 		document.getElementById("but1").value = "Start";
 		document.getElementById('but1').setAttribute( "onClick", "calling()" );
 	}
+
+	function lap()
+	{
+		var temphour=twodigitmagic(parseInt(document.getElementById("hour").innerHTML));
+		var tempminute=twodigitmagic(parseInt(document.getElementById("minute").innerHTML));
+		var tempsecond=twodigitmagic(parseInt(document.getElementById("second").innerHTML));
+		currenttime=temphour+":"+tempminute+":"+tempsecond;
+		currenttime=new Date("0001-01-01T"+currenttime);
+		alert(diff_minutes(currenttime,lasttime));
+		lasttime=currenttime;
+		// document.getElementById("laplog").innerHTML+=currenttime+"<br>";
+	}
+
+
+	function diff_minutes(currenttime, lasttime) 
+ 	{
+ 		var diff =(currenttime.getTime() - lasttime.getTime()) / 1000;
+ 		return diff; 
+	 }
 </script>
 <!--Logic For Start Button End -->
 
