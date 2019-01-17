@@ -41,11 +41,13 @@
 var hour=parseInt(document.getElementById("hour").innerHTML);
 var minute=parseInt(document.getElementById("minute").innerHTML);
 var second=parseInt(document.getElementById("second").innerHTML);
-var lasttime=new Date("0001-01-01T00:00:00");;
+var lasttime=new Date("0001-01-01T00:00:00");
 // alert(lasttime);
 var currenttime;
+var totaltime=0;
 var laplogs=[];
-laplogs[0]={logtime:"00",totaltime:"00"};
+var lapno=1;
+// laplogs[0]={interval:"00:00:00",total:"00:00:02",TimeRecorded:"Thu, 17 Jan 2019, 15:58:37.574"};
 // console.log(laplogs[0].totaltime);
 var startinterval;	
 
@@ -125,26 +127,48 @@ function start()
 		document.getElementById("hour").innerHTML="00";
 		document.getElementById("but1").value = "Start";
 		document.getElementById('but1').setAttribute( "onClick", "calling()" );
+		lapno=1;
+		document.getElementById("laplog").innerHTML="";
+		lasttime=new Date("0001-01-01T00:00:00");
+		totaltime=0;
 	}
 
 	function lap()
-	{
+	{	
+		//Code for maximum 10 laps log
+		if(lapno>10){return true;}
+
 		var temphour=twodigitmagic(parseInt(document.getElementById("hour").innerHTML));
 		var tempminute=twodigitmagic(parseInt(document.getElementById("minute").innerHTML));
 		var tempsecond=twodigitmagic(parseInt(document.getElementById("second").innerHTML));
 		currenttime=temphour+":"+tempminute+":"+tempsecond;
 		currenttime=new Date("0001-01-01T"+currenttime);
-		alert(diff_minutes(currenttime,lasttime));
+		//alert(diff_minutes(currenttime,lasttime));
+		
+		let diffinsecond=diff_minutes(currenttime,lasttime);
 		lasttime=currenttime;
-		// document.getElementById("laplog").innerHTML+=currenttime+"<br>";
+		let diffinformate=second_to_formate(diffinsecond);
+		
+		totaltime=totaltime+diffinsecond;
+		let totaltimeinformate=second_to_formate(totaltime);
+
+		document.getElementById("laplog").innerHTML+="Lap "+lapno+".&nbsp; "+diffinformate+" &nbsp;&nbsp;"+totaltimeinformate+"<br>";
+		lapno=lapno+1;
 	}
 
+	function second_to_formate(diffinsecond)
+	{
+    	var h = twodigitmagic(Math.floor(diffinsecond / 3600));
+    	var m = twodigitmagic(Math.floor(diffinsecond % 3600 / 60));
+    	var s = twodigitmagic(Math.floor(diffinsecond % 3600 % 60));
+	    return h+":"+m+":"+s;
+	}
 
-	function diff_minutes(currenttime, lasttime) 
+	function diff_minutes(currenttime,lasttime) 
  	{
  		var diff =(currenttime.getTime() - lasttime.getTime()) / 1000;
  		return diff; 
-	 }
+	}
 </script>
 <!--Logic For Start Button End -->
 
