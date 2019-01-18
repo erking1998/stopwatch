@@ -2,10 +2,10 @@
 <html>
 <head>
 	<title>StopWatch</title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
 	<style type="text/css">
 	</style>
 </head>
@@ -28,15 +28,16 @@
 	<input type="submit" value="Stop" onclick="stop()">
 	<input type="submit" value="Reset" onclick="reset()">
 	<input type="submit" value="Lap" onclick="lap()">
-	<input type="submit" value="History">
+	<input type="submit" value="History" onclick="showhistory()">
 </center>
 	
 <center>
 <div id="laplog"></div>
 </center>
+<center>
+<div id="historylog"></div>
+</center>
 
-
-<!--Logic For Start Button Start -->
 <script type="text/javascript">
 var hour=parseInt(document.getElementById("hour").innerHTML);
 var minute=parseInt(document.getElementById("minute").innerHTML);
@@ -46,10 +47,25 @@ var lasttime=new Date("0001-01-01T00:00:00");
 var currenttime;
 var totaltime=0;
 var laplogs=[];
+
 var lapno=1;
 // laplogs[0]={interval:"00:00:00",total:"00:00:02",TimeRecorded:"Thu, 17 Jan 2019, 15:58:37.574"};
 // console.log(laplogs[0].totaltime);
 var startinterval;	
+
+// localStorage.setItem("mytime", Date.now());
+// var x = localStorage.getItem("mytime");
+
+
+// For History 
+let history=new Array();
+const localStorageContent = localStorage.getItem('StopwatchHistoryData');
+if(localStorageContent != null) {
+	history=JSON.parse( localStorageContent);
+}
+var temphour=twodigitmagic(parseInt(document.getElementById("hour").innerHTML));
+var tempminute=twodigitmagic(parseInt(document.getElementById("minute").innerHTML));
+var tempsecond=twodigitmagic(parseInt(document.getElementById("second").innerHTML));
 
 function start()
 {	
@@ -108,12 +124,27 @@ function start()
 
 	function stop()
 	{
+
 		clearInterval(startinterval);
 		hour=parseInt("00");
 		minute=parseInt("00");
 		second=parseInt("00");
 		document.getElementById("but1").value = "Start";
 		document.getElementById('but1').setAttribute( "onClick", "calling()" );
+
+		// For History 
+		temphour=twodigitmagic(parseInt(document.getElementById("hour").innerHTML));
+		tempminute=twodigitmagic(parseInt(document.getElementById("minute").innerHTML));
+		tempsecond=twodigitmagic(parseInt(document.getElementById("second").innerHTML));
+
+		currenttime=temphour+":"+tempminute+":"+tempsecond;
+		let today=new Date();
+		
+		
+		history[history.length++]={starttime:'00:00:00',endtime:currenttime,TimeRecorded:today};
+		let jsontemp=JSON.stringify(history);
+		localStorage.setItem('StopwatchHistoryData', jsontemp);
+
 	}
 
 	function reset()
@@ -131,16 +162,23 @@ function start()
 		document.getElementById("laplog").innerHTML="";
 		lasttime=new Date("0001-01-01T00:00:00");
 		totaltime=0;
-	}
+		//Clear History Logs Portion 
+		 document.getElementById("historylog").innerHTML="";
+    }
 
 	function lap()
 	{	
+		// //Clear History Logs Portion 
+		//  document.getElementById("historylog").innerHTML.style.display = "none";
+		//  document.getElementById("laplog").style.display = "block";
+
 		//Code for maximum 10 laps log
 		if(lapno>10){return true;}
 
-		var temphour=twodigitmagic(parseInt(document.getElementById("hour").innerHTML));
-		var tempminute=twodigitmagic(parseInt(document.getElementById("minute").innerHTML));
-		var tempsecond=twodigitmagic(parseInt(document.getElementById("second").innerHTML));
+		temphour=twodigitmagic(parseInt(document.getElementById("hour").innerHTML));
+		tempminute=twodigitmagic(parseInt(document.getElementById("minute").innerHTML));
+		tempsecond=twodigitmagic(parseInt(document.getElementById("second").innerHTML));
+		
 		currenttime=temphour+":"+tempminute+":"+tempsecond;
 		currenttime=new Date("0001-01-01T"+currenttime);
 		//alert(diff_minutes(currenttime,lasttime));
@@ -154,6 +192,21 @@ function start()
 
 		document.getElementById("laplog").innerHTML+="Lap "+lapno+".&nbsp; "+diffinformate+" &nbsp;&nbsp;"+totaltimeinformate+"<br>";
 		lapno=lapno+1;
+	}
+
+	function showhistory()
+	{
+		// // Clear Lap Log Portion
+		// document.getElementById("laplog").style.display = "none";
+		// document.getElementById("historylog").innerHTML.style.display = "block";
+
+		//For History Log Print 
+		var hislog = JSON.parse(localStorage.getItem("StopwatchHistoryData"));
+		 document.getElementById("historylog").innerHTML="";
+		 hislog.reverse();
+		for(let i = 0; (i<hislog.length) && (i<10); i++) {
+			document.getElementById("historylog").innerHTML+="Data "+(i+1)+".&nbsp; "+hislog[i].starttime+" &nbsp;&nbsp;"+hislog[i].endtime+" &nbsp; "+hislog[i].TimeRecorded+"<br>";
+		}
 	}
 
 	function second_to_formate(diffinsecond)
@@ -170,7 +223,6 @@ function start()
  		return diff; 
 	}
 </script>
-<!--Logic For Start Button End -->
 
 
 </body>
