@@ -95,10 +95,12 @@ function stop()
 	tempminute=twodigitmagic(parseInt(document.getElementById("minute").innerHTML));
 	tempsecond=twodigitmagic(parseInt(document.getElementById("second").innerHTML));
 	currenttime=temphour+":"+tempminute+":"+tempsecond;
-	let today=new Date();
-	history[history.length++]={starttime:'00:00:00',endtime:currenttime,TimeRecorded:today};
-	let jsontemp=JSON.stringify(history);
-	localStorage.setItem('StopwatchHistoryData', jsontemp);
+	if(currenttime!="00:00:00"){
+		let today=new Date();
+		history[history.length++]={starttime:'00:00:00',endtime:currenttime,TimeRecorded:today};
+		let jsontemp=JSON.stringify(history);
+		localStorage.setItem('StopwatchHistoryData', jsontemp);
+	}
 }
 
 
